@@ -1,0 +1,8 @@
+{
+    "known_nets": [
+        {
+            "ssid": "environment",
+            "auth": "monitor"
+        }
+    ]
+}
