@@ -5,6 +5,8 @@ import bme280
 import ssd1306
 import time
 
+from sensordata import SensorData
+
 DISPLAY_WIDTH = 128
 DISPLAY_HEIGHT = 64
 DISPLAY_ADDRESS = 0x3c
@@ -14,12 +16,16 @@ def main():
     wl, bme, oled = init()
 
     while True:
-        values = bme.values
+        temperature, pressure, humidity = bme.read_compensated_data()
+        data = SensorData()
+        data.Temperature = round((temperature / 100) * 1.8 + 32, 1)
+        data.Humidity = round(humidity / 1024, 1)
+        data.Pressure = round(pressure / 256 / 100, 1)
         
         oled.fill(0)
-        oled.text(str.format("Temp: {}", values[0]), 0, 0)
-        oled.text(str.format("Pres: {}", values[1]), 0, 10)
-        oled.text(str.format("Humi: {}", values[2]), 0, 20)
+        oled.text(str.format("T: {:.1f}F", data.Temperature), 0, 0)
+        oled.text(str.format("H: {:.1f}%", data.Humidity), 0, 10)
+        oled.text(str.format("P: {:.1f}hPa", data.Pressure), 0, 20)
         oled.text(str.format("SSID: {}", wl.ssid()), 0, 54)
         oled.show()
 
